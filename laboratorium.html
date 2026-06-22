@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMKES</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>SIMKES</h2>
+        <a href="index.html">Dashboard</a>
+        <a href="pendaftaran.html">Pendaftaran</a>
+        <a href="poli.html">Pemeriksaan Poli</a>
+        <a href="farmasi.html">Farmasi</a>
+        <a class="active" href="laboratorium.html">Laboratorium</a>
+        <a href="radiologi.html">Radiologi</a>
+        <a href="kasir.html">Kasir</a>
+        <a href="login.html">Logout</a>
+    </div>
+    <div class="main">
+
+        <div class="card">
+            <h2>Laboratorium</h2>
+            <input id="NamaPasien" placeholder="Nama Pasien">
+            <select id="Pemeriksaan">
+                <option>Hematologi</option>
+                <option>Kimia Klinik</option>
+                <option>Urinalisa</option>
+                <option>Mikrobiologi</option>
+                <option>Imunologi</option>
+                <option>Tes Gula Darah</option>
+                <option>Kolesterol</option>
+                <option>Asam Urat</option>
+                <option>Fungsi Hati</option>
+                <option>Fungsi Ginjal</option>
+            </select>
+            <input id="Hasil" placeholder="Hasil Laboratorium">
+            <button id="btnSubmit" onclick="submitLaboratorium()">Simpan Hasil</button>
+        </div>
+
+        <script>
+            let laboratorium = []
+            let indexUpdate = -1
+
+            function submitLaboratorium() {
+                let NamaPasien = document.getElementById("NamaPasien").value.trim()
+                let Pemeriksaan = document.getElementById("Pemeriksaan").value.trim()
+                let Hasil = document.getElementById("Hasil").value.trim()
+
+                if (!NamaPasien) {
+                    alert("Nama pasien wajib di isi")
+                } else if (!Hasil) {
+                    alert("Hasil laboratorium harus diisi")
+
+                } else if (indexUpdate !== -1) {
+                    laboratorium[indexUpdate] = {
+                        nama: NamaPasien,
+                        pemeriksaan: Pemeriksaan,
+                        hasil: Hasil
+                    }
+
+                    alert("Data laboratorium berhasil diupdate")
+
+                    indexUpdate = -1
+                    document.getElementById("btnSubmit").innerText = "Simpan Hasil"
+
+                    renderTable()
+                    document.getElementById("NamaPasien").value = ""
+                    document.getElementById("Pemeriksaan").selectedIndex = 0
+                    document.getElementById("Hasil").value = ""
+
+                } else {
+                    laboratorium.push({
+                        nama: NamaPasien,
+                        pemeriksaan: Pemeriksaan,
+                        hasil: Hasil,
+                    })
+
+                    alert("Data laboratorium berhasil disimpan")
+
+
+                    renderTable()
+                    document.getElementById("NamaPasien").value = ""
+                    document.getElementById("Pemeriksaan").selectedIndex = 0
+                    document.getElementById("Hasil").value = ""
+                }
+            }
+
+            function renderTable() {
+                let html = ""
+                laboratorium.forEach((item, index) => {
+                    html += `
+                <tr>
+                    <td>${item.nama}</td>
+                    <td>${item.pemeriksaan}</td>
+                    <td>${item.hasil}</td>
+                    <td>
+                        <button onclick="updateLaboratorium(${index})">Update</button>
+                        <button onclick="deleteLaboratorium(${index})">Delete</button>
+                    </td>
+                </tr>
+                `
+                })
+                document.getElementById("tlaboratorium").innerHTML = html
+            }
+
+            function deleteLaboratorium(index) {
+                let konfirmasi = confirm(
+                    `Yakin ingin menghapus data ${laboratorium[index].nama}?`
+                );
+
+                if (konfirmasi) {
+                    laboratorium.splice(index, 1);
+                    renderTable();
+                    alert("Data berhasil dihapus");
+                }
+            }
+
+            function updateLaboratorium(index) {
+                document.getElementById("NamaPasien").value = laboratorium[index].nama
+                document.getElementById("Pemeriksaan").value = laboratorium[index].pemeriksaan;
+                document.getElementById("Hasil").value = laboratorium[index].hasil;
+                document.getElementById("btnSubmit").innerText = "Update Hasil";
+
+                indexUpdate = index;
+            }
+
+            renderTable();
+        </script>
+
+        <div class="card">
+            <h2>Data Pemeriksaan Lab</h2>
+            <table>
+                <tr>
+                    <th>Pasien</th>
+                    <th>Pemeriksaan</th>
+                    <th>Hasil</th>
+                    <th>Aksi</th>
+                </tr>
+                <tbody id="tlaboratorium"></tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>
