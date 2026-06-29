@@ -34,96 +34,6 @@
             <button id="btnSubmit" onclick="submitRadiologi()">Simpan Hasil</button>
         </div>
 
-        <script>
-            let radiologi = []
-            let indexUpdate = -1
-
-            function submitRadiologi() {
-                let NamaPasien = document.getElementById("NamaPasien").value.trim()
-                let Pemeriksaan = document.getElementById("Pemeriksaan").value.trim()
-                let Hasil = document.getElementById("Hasil").value.trim()
-
-                if (!NamaPasien) {
-                    alert("Nama pasien wajib di isi")
-                } else if (!Hasil) {
-                    alert("Hasil radiologi harus diisi")
-
-                } else if (indexUpdate !== -1) {
-                    radiologi[indexUpdate] = {
-                        nama: NamaPasien,
-                        pemeriksaan: Pemeriksaan,
-                        hasil: Hasil
-                    }
-
-                    alert("Data radiologi berhasil diupdate")
-
-                    indexUpdate = -1
-                    document.getElementById("btnSubmit").innerText = "Simpan Hasil"
-
-                    renderTable()
-                    document.getElementById("NamaPasien").value = ""
-                    document.getElementById("Pemeriksaan").selectedIndex = 0
-                    document.getElementById("Hasil").value = ""
-
-                } else {
-                    radiologi.push({
-                        nama: NamaPasien,
-                        pemeriksaan: Pemeriksaan,
-                        hasil: Hasil,
-                    })
-
-                    alert("Data radiologi berhasil disimpan")
-
-
-                    renderTable()
-                    document.getElementById("NamaPasien").value = ""
-                    document.getElementById("Pemeriksaan").selectedIndex = 0
-                    document.getElementById("Hasil").value = ""
-                }
-            }
-
-            function renderTable() {
-                let html = ""
-                radiologi.forEach((item, index) => {
-                    html += `
-                <tr>
-                    <td>${item.nama}</td>
-                    <td>${item.pemeriksaan}</td>
-                    <td>${item.hasil}</td>
-                    <td>
-                        <button onclick="updateRadiologi(${index})">Update</button>
-                        <button onclick="deleteRadiologi(${index})">Delete</button>
-                    </td>
-                </tr>
-                `
-                })
-                document.getElementById("tradiologi").innerHTML = html
-            }
-
-            function deleteRadiologi(index) {
-                let konfirmasi = confirm(
-                    `Yakin ingin menghapus data ${radiologi[index].nama}?`
-                );
-
-                if (konfirmasi) {
-                    radiologi.splice(index, 1);
-                    renderTable();
-                    alert("Data berhasil dihapus");
-                }
-            }
-
-            function updateRadiologi(index) {
-                document.getElementById("NamaPasien").value = radiologi[index].nama
-                document.getElementById("Pemeriksaan").value = radiologi[index].pemeriksaan;
-                document.getElementById("Hasil").value = radiologi[index].hasil;
-                document.getElementById("btnSubmit").innerText = "Update Hasil";
-
-                indexUpdate = index;
-            }
-
-            renderTable();
-        </script>
-
         <div class="card">
             <h2>Data Radiologi</h2>
             <table>
@@ -138,6 +48,97 @@
         </div>
 
     </div>
+    <script>
+        let radiologi = localStorage.getItem("radiologi") ? JSON.parse(localStorage.getItem("radiologi")) : []
+        let indexUpdate = -1
+
+        function submitRadiologi() {
+            let NamaPasien = document.getElementById("NamaPasien").value.trim()
+            let Pemeriksaan = document.getElementById("Pemeriksaan").value.trim()
+            let Hasil = document.getElementById("Hasil").value.trim()
+
+            if (!NamaPasien) {
+                alert("Nama pasien wajib di isi")
+            } else if (!Hasil) {
+                alert("Hasil radiologi harus diisi")
+
+            } else if (indexUpdate !== -1) {
+                radiologi[indexUpdate] = {
+                    nama: NamaPasien,
+                    pemeriksaan: Pemeriksaan,
+                    hasil: Hasil
+                }
+
+                localStorage.setItem("radiologi", JSON.stringify(radiologi))
+                document.getElementById("btnSubmit").innerText = "Simpan Hasil"
+                alert("Data radiologi berhasil diupdate")
+                indexUpdate = -1
+            
+
+                renderTable()
+                document.getElementById("NamaPasien").value = ""
+                document.getElementById("Pemeriksaan").selectedIndex = 0
+                document.getElementById("Hasil").value = ""
+
+            } else {
+                radiologi.push({
+                    nama: NamaPasien,
+                    pemeriksaan: Pemeriksaan,
+                    hasil: Hasil,
+                })
+
+                alert("Data radiologi berhasil disimpan")
+
+                localStorage.setItem("radiologi", JSON.stringify(radiologi))
+                renderTable()
+                document.getElementById("NamaPasien").value = ""
+                document.getElementById("Pemeriksaan").selectedIndex = 0
+                document.getElementById("Hasil").value = ""
+            }
+        }
+
+        function renderTable() {
+            let html = ""
+            radiologi.forEach((item, index) => {
+                html += `
+                <tr>
+                    <td>${item.nama}</td>
+                    <td>${item.pemeriksaan}</td>
+                    <td>${item.hasil}</td>
+                    <td>
+                        <button onclick="updateRadiologi(${index})">Update</button>
+                        <button onclick="deleteRadiologi(${index})">Delete</button>
+                    </td>
+                </tr>
+                `
+            })
+            document.getElementById("tradiologi").innerHTML = html
+        }
+
+        function deleteRadiologi(index) {
+            let konfirmasi = confirm(
+                `Yakin ingin menghapus data ${radiologi[index].nama}?`
+            );
+
+            if (konfirmasi) {
+                radiologi.splice(index, 1)
+                localStorage.setItem("radiologi", JSON.stringify(radiologi))
+                renderTable()
+                alert("Data berhasil dihapus")
+            }
+        }
+
+        function updateRadiologi(index) {
+            document.getElementById("NamaPasien").value = radiologi[index].nama
+            document.getElementById("Pemeriksaan").value = radiologi[index].pemeriksaan
+            document.getElementById("Hasil").value = radiologi[index].hasil
+            document.getElementById("btnSubmit").innerText = "Update Hasil"
+
+            indexUpdate = index
+        }
+
+        renderTable()
+    </script>
 </body>
 
 </html>

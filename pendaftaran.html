@@ -35,10 +35,27 @@
             <button id="submit" class="btn-simpan" onclick="submitRegister()">Simpan</button>
         </div>
 
-        <script>
-            let pasien = []
+        <div class="card">
+            <h2>List Pendaftaran</h2>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Poli</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
 
+                <tbody id="tpasien"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+       <script>
+            let pasien = localStorage.getItem("pasien") ? JSON.parse(localStorage.getItem("pasien")) : []
             let indexUpdate = -1
+            console.log(pasien)
 
             function submitRegister() {
                 let NamaPasien = document.getElementById("NamaPasien").value.trim()
@@ -53,7 +70,8 @@
                         nama: NamaPasien,
                         poli: PilihanPoli
                     }
-
+                    
+                    localStorage.setItem("pasien", JSON.stringify(pasien))
                     document.getElementById("submit").innerText = "simpan"
                     alert("Pasien berhasil diupdate")
                     indexUpdate = -1
@@ -65,7 +83,8 @@
                     })
                     alert("Pasien berhasil disimpan")
                 }
-
+                
+                localStorage.setItem("pasien", JSON.stringify(pasien))
                 renderTable()
                 document.getElementById("NamaPasien").value = ""
                 document.getElementById("PilihanPoli").selectedIndex = 0
@@ -95,7 +114,8 @@
                     confirm(`Yakin ingin hapus pasien ${pasien[index].nama}?`)
 
                 if (konfirmasi) {
-                    pasien.splice(index, 1)
+                    pasien.splice(index, 1) 
+                    localStorage.setItem("pasien", JSON.stringify(pasien))
                     renderTable()
                     alert("Pasien berhasil dihapus")
                 }
@@ -106,25 +126,12 @@
                 document.getElementById("NamaPasien").value = pasien[index].nama
                 document.getElementById("PilihanPoli").value = pasien[index].poli
                 indexUpdate = index
+            
             }
+
+            renderTable()
         </script>
 
-        <div class="card">
-            <h2>List Pendaftaran</h2>
-            <table>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Poli</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-
-                <tbody id="tpasien"></tbody>
-            </table>
-        </div>
-
-    </div>
 </body>
 
 </html>
